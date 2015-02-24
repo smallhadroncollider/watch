@@ -1,5 +1,29 @@
 #! /bin/zsh
 
+# Check config exists
+if [ ! -e ".watchrc" ]; then
+    >&2 echo ".watchrc file not found"
+    exit 1
+fi
+
+# Load in config
+source .watchrc
+
+# Check command is set
+if [ -z "$command" ]; then
+    >&2 echo "command should be set"
+    exit 1
+fi
+
+# Check interval is a sensible value
+too_big=$(echo "$interval > 5" | bc -l)
+too_small=$(echo "$interval < 0.1" | bc -l)
+
+if [ "$too_big" -eq 1 -o "$too_small" -eq 1 ]; then
+    >&2 echo "interval should be between 0.1 and 5"
+    exit 1
+fi
+
 # Setup empty variables
 last_error_message=""
 last_error_timestamp=""
@@ -10,7 +34,7 @@ time_since=0
 while true;
 do
     # Run watch
-    result=$(make watch)
+    result=$($command)
 
     # If non-zero exit code (i.e. an error)
     if [ $? -ne 0 ]
@@ -61,10 +85,5 @@ do
     fi
 
     # Accept sleep time from command line, otherwise set to 0.5 seconds
-    if [ -n "$1" ]
-    then
-        sleep "$1"
-    else
-        sleep 0.5
-    fi
+    sleep "$interval"
 done

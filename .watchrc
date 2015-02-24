@@ -1,0 +1,5 @@
+# command to run
+command="make watch"
+
+# how often to run it
+interval=0.5
