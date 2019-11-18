@@ -59,7 +59,7 @@ do
 
     # Right align the time
     time=$(date +"%T")
-    title="Watching..."
+    title="Watching $(pwd)..."
     let pos=$(tput cols)-${#title} # Work out how much to pad to right align
     printf "\e[34m%s\e[33m%${pos}s\e[39m\n" $title "$time"
 
